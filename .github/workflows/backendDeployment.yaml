@@ -1,0 +1,52 @@
+name: Deploy to AWS Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  deploy:
+    environment: prod
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x # Use the same Node.js version as your Lambda runtime
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build with esbuild
+        run: yarn build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Zip Lambda code
+        run: zip -r lambda.zip dist/*
+
+      - name: Deploy Lambda function
+        run: |
+          aws lambda update-function-code --function-name sci-backend --zip-file fileb://lambda.zip
+          aws lambda wait function-updated --function-name sci-backend
+          aws lambda update-function-configuration \
+            --function-name sci-backend \
+            --handler dist/lambda.handler \
+            --timeout 60 \
+            --memory-size 512
+
+      - name: Run tests
+        run: yarn test
