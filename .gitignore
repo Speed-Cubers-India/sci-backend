@@ -1,0 +1,39 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript build output
+dist/
+*.tsbuildinfo
+
+# Environment variables & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# AWS Lambda & deployment files
+deploy.zip
+.aws-sam/
+cdk.out/
+
+# Logs & system files
+logs/
+*.log
+*.log.*
+.DS_Store
+Thumbs.db
+
+# Editor & OS-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+
+# Ignore local testing folders
+coverage/
