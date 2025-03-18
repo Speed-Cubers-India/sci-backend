@@ -9,9 +9,8 @@ const rankings = async (req: Request, res: Response): Promise<void> => {
     const rankingsS3DataUrl = process.env.RANKINGS_S3_DATA_URL;
     const response = await axios.get(rankingsS3DataUrl);
     res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching rankings data:", error);
-    res.status(500).json({ error: "Failed to fetch rankings data" });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };
 

@@ -9,7 +9,7 @@ const competitions = async (req: Request, res: Response): Promise<void> => {
     const compsS3DATAURL = process.env.COMPS_S3_DATA_URL;
     const response = await axios.get(compsS3DATAURL);
     res.json(response.data);
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 };
