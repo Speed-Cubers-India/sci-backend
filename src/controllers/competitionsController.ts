@@ -1,14 +1,17 @@
 import { Request, Response } from 'express';
+import dotenv from 'dotenv';
+import axios from 'axios';
 
-const competitions = (req: Request, res: Response): void => {
-  res.json([
-    {
-      competitionId: 'RECCubeOpen2024',
-      name: 'REC Cube Open 2024',
-      start_date: '2014-03-07',
-      end_date: '2014-03-07',
-    },
-  ]);
+dotenv.config();
+
+const competitions = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const compsS3DATAURL = process.env.COMPS_S3_DATA_URL;
+    const response = await axios.get(compsS3DATAURL);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 export default competitions;
