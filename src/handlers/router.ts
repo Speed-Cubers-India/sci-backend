@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import competitions from './controllers/competitionsController';
-import rankings from "./controllers/rankingsController";
+import competitions from '../controllers/competitionsController';
+import rankings from "../controllers/rankingsController";
 
 const router: Router = Router();
 
