@@ -1,15 +1,15 @@
 import express, { Application } from "express";
-import router from "./handlers/router";
-import auth from "./handlers/auth";
-import cors from "cors";
+import router from "./routes";
+import auth from "./routes/auth";
 import dotenv from "dotenv";
+import corsOptions from "./config/corsOptions";
 dotenv.config();
 
 // Initialize the express app.
 const app: Application = express();
 
-// Enable CORS.
-app.use(corsOptions)
+// Enable CORS
+app.use(corsOptions);
 
 // Middleware setup.
 app.use(express.json());
