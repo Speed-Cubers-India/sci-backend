@@ -7,18 +7,18 @@ const callback = async (req: Request, res: Response): Promise<any> => {
 
   try {
     // Exchange authorization code for access token
-    const tokenResponse = await axios.post(process.env.WCA_AUTH_URL || "", {
+    const tokenResponse = await axios.post(`${process.env.WCA_URL}/oauth/token`, {
       grant_type: "authorization_code",
       client_id: process.env.WCA_CLIENT_ID,
       client_secret: process.env.WCA_CLIENT_SECRET,
       code,
-      redirect_uri: `${process.env.BASE_URL}/api/auth/callback`,
+      redirect_uri: "/api/auth/callback",
     });
 
     const { access_token } = tokenResponse.data;
 
     // Fetch user details
-    const userResponse = await axios.get(process.env.WCA_API_URL || "", {
+    const userResponse = await axios.get(`${process.env.WCA_URL}/api/v0/me`, {
       headers: { Authorization: `Bearer ${access_token}` },
     });
 
