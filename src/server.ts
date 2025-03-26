@@ -1,6 +1,7 @@
 import app from './app';
+import appConfig from './config/appConfig';
 
-const port: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
+const port = appConfig.port;
 
 app.listen(port, () => {
   console.log(`Local server running on http://localhost:${port}`);
