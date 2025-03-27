@@ -1,7 +1,8 @@
 import cors from "cors";
+import appConfig from "./appConfig";
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL, // Allow frontend domain
+  origin: appConfig.frontendUrl, // Allow frontend domain
   methods: "GET,POST", // Allowed HTTP methods
   credentials: true, // Allow cookies if needed
 };
