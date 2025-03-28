@@ -7,7 +7,7 @@ import corsOptions from './config/corsOptions';
 const app: Application = express();
 
 // Enable CORS.
-app.use(corsOptions);
+app.use(corsOptions)
 
 // Middleware setup.
 app.use(express.json());
