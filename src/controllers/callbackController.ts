@@ -1,16 +1,17 @@
 import axios from "axios";
 import { Request, Response } from "express";
+import appConfig from "../config/appConfig";
 
 const callback = async (req: Request, res: Response): Promise<any> => {
   const { code } = req.query;
-  const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+  const FRONTEND_URL = appConfig.frontendUrl || "http://localhost:5173";
 
   try {
     // Exchange authorization code for access token
-    const tokenResponse = await axios.post(`${process.env.WCA_URL}/oauth/token`, {
+    const tokenResponse = await axios.post(`${appConfig.wcaUrl}/oauth/token`, {
       grant_type: "authorization_code",
-      client_id: process.env.WCA_CLIENT_ID,
-      client_secret: process.env.WCA_CLIENT_SECRET,
+      client_id: appConfig.wcaClientId,
+      client_secret: appConfig.wcaClientSecret,
       code,
       redirect_uri: "/api/auth/callback",
     });
@@ -18,7 +19,7 @@ const callback = async (req: Request, res: Response): Promise<any> => {
     const { access_token } = tokenResponse.data;
 
     // Fetch user details
-    const userResponse = await axios.get(`${process.env.WCA_URL}/api/v0/me`, {
+    const userResponse = await axios.get(`${appConfig.wcaUrl}/api/v0/me`, {
       headers: { Authorization: `Bearer ${access_token}` },
     });
 
