@@ -2,7 +2,14 @@ import axios from "axios";
 import { Request, Response } from "express";
 import appConfig from "../config/appConfig";
 
-const callback = async (req: Request, res: Response): Promise<any> => {
+export const login = async (req: Request, res: Response): Promise<void> => {
+  const redirectUri = "/api/auth/callback";
+  const queryParams = `?client_id=${appConfig.wcaClientId}&redirect_uri=${redirectUri}&response_type=code`;
+  const authUrl = `${appConfig.wcaUrl}/oauth/authorize${queryParams}`;
+  res.redirect(authUrl);
+};
+
+export const callback = async (req: Request, res: Response): Promise<any> => {
   const { code } = req.query;
   const FRONTEND_URL = appConfig.frontendUrl || "http://localhost:5173";
 
@@ -35,5 +42,3 @@ const callback = async (req: Request, res: Response): Promise<any> => {
     console.log(error);
   }
 };
-
-export default callback;

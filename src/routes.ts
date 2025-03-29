@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import competitions from './controllers/competitionsController';
 import rankings from "./controllers/rankingsController";
-import login from './controllers/loginController';
-import callback from './controllers/callbackController';
+import { callback, login } from './controllers/authController';
 
 const router: Router = Router();
 
