@@ -3,10 +3,12 @@ import { Request, Response } from "express";
 import appConfig from "../config/appConfig";
 
 export const login = async (req: Request, res: Response): Promise<void> => {
+  const authUrl = new URL(`${appConfig.wcaUrl}/oauth/authorize`);
   const redirectUri = "/api/auth/callback";
-  const queryParams = `?client_id=${appConfig.wcaClientId}&redirect_uri=${redirectUri}&response_type=code`;
-  const authUrl = `${appConfig.wcaUrl}/oauth/authorize${queryParams}`;
-  res.redirect(authUrl);
+  authUrl.searchParams.append("client_id", appConfig.wcaClientId);
+  authUrl.searchParams.append("redirect_uri", redirectUri);
+  authUrl.searchParams.append("response_type", "code");
+  res.redirect(authUrl.toString());
 };
 
 export const callback = async (req: Request, res: Response): Promise<any> => {
