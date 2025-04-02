@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import appConfig from "../config/appConfig";
-import { fetchUserData } from "../utils/auth";
+import { fetchUserData } from "../services/userService";
 
 /**
  * Initiates OAuth login flow by redirecting to the WCA authorization endpoint
@@ -40,7 +40,7 @@ export const callback = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const user = await fetchUserData(code, appConfig);
+    const user = await fetchUserData(code as string);
 
     if (!user) {
       console.error("User data not found");

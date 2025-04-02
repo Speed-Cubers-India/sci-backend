@@ -1,6 +1,7 @@
 import axios from "axios";
+import appConfig from "../config/appConfig";
 
-export async function fetchUserData(code, appConfig) {
+export async function fetchUserData(authCode: string) {
   try {
     // Create token endpoint URL
     const tokenUrl = new URL(`${appConfig.wcaUrl}/oauth/token`);
@@ -10,7 +11,7 @@ export async function fetchUserData(code, appConfig) {
       grant_type: "authorization_code",
       client_id: appConfig.wcaClientId,
       client_secret: appConfig.wcaClientSecret,
-      code,
+      authCode,
       redirect_uri: "/api/auth/callback",
     });
 
@@ -25,8 +26,8 @@ export async function fetchUserData(code, appConfig) {
     });
 
     return userResponse.data;
-  } catch (error) {
-    console.error("Error fetching user data:", error.message);
+  } catch (error: Error | any) {
+    console.error("Error fetching user data:", error?.message);
     throw new Error("Failed to fetch user data");
   }
 }
