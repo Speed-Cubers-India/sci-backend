@@ -1,25 +1,14 @@
 import { Request, Response } from "express";
 import appConfig from "../config/appConfig";
 import { fetchUserData } from "../services/userService";
+import { constructLoginUrl } from "../services/constructLoginUrl";
 
 /**
  * Initiates OAuth login flow by redirecting to the WCA authorization endpoint
  */
 export const login = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const authUrl = new URL(`${appConfig.wcaUrl}/oauth/authorize`);
-
-    // Configure OAuth parameters
-    authUrl.searchParams.append("client_id", appConfig.wcaClientId);
-    authUrl.searchParams.append("redirect_uri", "/api/auth/callback");
-    authUrl.searchParams.append("response_type", "code");
-
-    // Redirect user to authorization page
-    res.redirect(authUrl.toString());
-  } catch (error) {
-    console.error("Authentication redirect error:", error);
-    res.status(401).json({ error: "Failed to initiate authentication" });
-  }
+  // Redirect user to authorization page
+  res.redirect(constructLoginUrl());
 };
 
 /**
