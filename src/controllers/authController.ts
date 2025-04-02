@@ -16,7 +16,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
  */
 export const callback = async (req: Request, res: Response): Promise<void> => {
   const { code } = req.query;
-   // Add login=true as query parameter
-   const loginUrl = await contructLoginUrl(code as string);
-    res.redirect(loginUrl);
+  // Add login=true as query parameter
+  const loginUrl = await contructLoginUrl(code as string);
+  res.redirect(loginUrl);
 };
