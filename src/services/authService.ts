@@ -1,5 +1,5 @@
+import axios from "axios";
 import appConfig from "../config/appConfig";
-import { fetchUserData } from "./userService";
 
 //authURL
 export const constructAuthUrl = () => {
@@ -7,49 +7,47 @@ export const constructAuthUrl = () => {
 
   // Configure OAuth parameters
   authUrl.searchParams.append("client_id", appConfig.wcaClientId);
-  authUrl.searchParams.append("redirect_uri", "/api/auth/callback");
+  authUrl.searchParams.append("redirect_uri", `${appConfig.baseUrl}/api/auth/callback`);
   authUrl.searchParams.append("response_type", "code");
 
   return authUrl.toString();
 };
 
 
-//loginURL
-export const contructLoginUrl = async (code: string) => {
-  const frontendUrl = new URL(appConfig.frontendUrl);
+export async function fetchUserData(authCode: string) {
 
-  // Validate authorization code
-  if (!code) {
+  if(!authCode) {
     console.error("Missing authorization code");
-    const errorUrl = new URL(frontendUrl.toString());
-    errorUrl.pathname = "/login";
-    errorUrl.searchParams.append("error", "missing-code");
-    return errorUrl.toString();
+    throw new Error("Missing authorization code");
   }
 
   try {
-    const user = await fetchUserData(code as string);
+    // Create token endpoint URL
+    const tokenUrl = new URL(`${appConfig.wcaUrl}/oauth/token`);
 
-    if (!user) {
-      console.error("User data not found");
-      const errorUrl = new URL(frontendUrl.toString());
-      errorUrl.pathname = "/login";
-      errorUrl.searchParams.append("error", "user-not-found");
-      return errorUrl.toString();
-    }
+    // Exchange authorization code for access token
+    const tokenResponse = await axios.post(tokenUrl.toString(), {
+      grant_type: "authorization_code",
+      client_id: appConfig.wcaClientId,
+      client_secret: appConfig.wcaClientSecret,
+      code: authCode,
+      redirect_uri: `${appConfig.baseUrl}/api/auth/callback`,
+    });
 
-    // Store user data in session if needed
-    // req.session.user = user;
+    const { access_token } = tokenResponse.data;
 
-    // Successful authentication
-    const successUrl = new URL(frontendUrl.toString());
-    successUrl.searchParams.append("login", "true");
-    return successUrl.toString();
+    // Create user data endpoint URL
+    const userUrl = new URL(`${appConfig.wcaUrl}/api/v0/me`);
+
+    // Fetch user details
+    const userResponse = await axios.get(userUrl.toString(), {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+
+    return userResponse.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
-    const errorUrl = new URL(frontendUrl.toString());
-    errorUrl.pathname = "/login";
-    errorUrl.searchParams.append("error", "authentication-failed");
-    return errorUrl.toString();
+    throw new Error("Failed to fetch user data");
   }
-};
+}
+
