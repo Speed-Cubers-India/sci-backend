@@ -4,11 +4,15 @@ import { Request, Response } from "express";
 const TEAMS_S3_URL =
   "https://sci-temporary-bucket.s3.us-west-2.amazonaws.com/teams.json";
 
+const USERS_S3_URL =
+  "https://sci-temporary-bucket.s3.us-west-2.amazonaws.com/users.json";
+
 // Helper to get user info by ID
 async function fetchUserById(id: number): Promise<any | null> {
   try {
-    const res = await axios.get(`https://www.worldcubeassociation.org/api/v0/users/${id}`);
-    return res.data?.user ?? null;
+    const res = await axios.get(USERS_S3_URL)
+    const user = res.data?.users?.find((user: any) => user.id === id)
+    return user ?? null;
   } catch (err) {
     console.error(`Failed to fetch user ${id}:`, err);
     return null;
@@ -33,9 +37,7 @@ export const teams = async (req: Request, res: Response): Promise<void> => {
           members: members.filter(Boolean), // remove nulls
         };
       })
-    );
-    console.log(teamList);
-    
+    );  
     res.json(teamList);
   } catch (error: any) {
     console.error("Error fetching teams:", error);
