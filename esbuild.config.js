@@ -4,5 +4,5 @@ require('esbuild').build({
   platform: 'node',
   target: 'node18',
   outfile: 'dist/lambda.js',
-  external: ['aws-sdk'],
+  external: ['aws-sdk', 'cors', 'dotenv'],
 }).catch(() => process.exit(1));
