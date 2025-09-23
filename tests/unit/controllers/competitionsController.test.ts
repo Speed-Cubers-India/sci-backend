@@ -1,24 +1,33 @@
 import { describe, it, expect, vi } from 'vitest';
+import { Request, Response } from 'express';
+import axios from 'axios';
 import competitions from '../../../src/controllers/competitionsController';
-import { Request, Response } from 'express'; // Import Request and Response types
 
-describe('competitions', () => {
-  it('should return a JSON array of competitions', () => {
-    const mockJson = vi.fn();
-    const mockRes = {
-      json: mockJson,
-    } as unknown as Response;
-    const mockReq = {} as Request;
+vi.mock('axios');
 
-    competitions(mockReq, mockRes);
+describe('competitionsController', () => {
+  const mockRequest = {} as Request;
+  const mockResponse = {
+    json: vi.fn(),
+    status: vi.fn().mockReturnThis(),
+  } as unknown as Response;
 
-    expect(mockJson).toHaveBeenCalledWith([
-      {
-        competitionId: 'RECCubeOpen2024',
-        name: 'REC Cube Open 2024',
-        start_date: '2014-03-07',
-        end_date: '2014-03-07',
-      },
-    ]);
+  it('returns competition data on success', async () => {
+    const mockData = [{ id: 1, name: 'Test' }];
+    vi.mocked(axios.get).mockResolvedValue({ data: mockData });
+
+    await competitions(mockRequest, mockResponse);
+
+    expect(axios.get).toHaveBeenCalledWith('https://sci-temporary-bucket.s3.us-west-2.amazonaws.com/competition.json');
+    expect(mockResponse.json).toHaveBeenCalledWith(mockData);
+  });
+
+  it('returns 500 on error', async () => {
+    vi.mocked(axios.get).mockRejectedValue(new Error('Failed'));
+
+    await competitions(mockRequest, mockResponse);
+
+    expect(mockResponse.status).toHaveBeenCalledWith(500);
+    expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Failed' });
   });
 });
