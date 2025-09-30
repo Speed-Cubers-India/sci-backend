@@ -36,7 +36,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Zip Lambda code
-        run: zip -r lambda.zip dist/*
+        run: zip -r lambda.zip dist node_modules
 
       - name: Deploy Lambda function
         run: |
