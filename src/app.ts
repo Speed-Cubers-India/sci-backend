@@ -1,15 +1,8 @@
 import express, { Application } from 'express';
+import corsOptions from './config/corsOptions';
 import router from './routes/routes';
-import corsOptions from './config/corsOptions';
-import express, { Application } from "express";
-import router from "./routes";
-import auth from "./routes/auth";
-import router from './routes';
-import auth from './routes/auth';
-import corsOptions from './config/corsOptions';
-import router from './routes';
-import corsOptions from './config/corsOptions';
 import authRouter from './routes/authRoutes';
+
 
 // Initialize the express app.
 const app: Application = express();

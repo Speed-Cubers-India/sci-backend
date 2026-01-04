@@ -17,13 +17,22 @@ export const login = async (req: Request, res: Response): Promise<void> => {
  */
 export const callback = async (req: Request, res: Response): Promise<void> => {
   const code = req.query.code;
+  if (typeof code !== "string") {
+    res.redirect(
+      `${appConfig.frontendUrl}/login?error=invalid_authorization_code`
+    );
+    return;
+  }
   try {
-    const user = await fetchUserData(code as string);
-    console.log(user);
+    const user = await fetchUserData(code);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(user);
+    }
     //do something with the user data
     // after adding session redirect the user to the frontend
     res.redirect(`${appConfig.frontendUrl}`);
   } catch (error) {
+    console.error("Error during OAuth callback:", error);
     res.redirect(`${appConfig.frontendUrl}/login?error=${error}`);
   }
 };

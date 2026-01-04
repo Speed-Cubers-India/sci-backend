@@ -7,16 +7,17 @@ export const constructAuthUrl = () => {
 
   // Configure OAuth parameters
   authUrl.searchParams.append("client_id", appConfig.wcaClientId);
-  authUrl.searchParams.append("redirect_uri", `${appConfig.baseUrl}/api/auth/callback`);
+  authUrl.searchParams.append(
+    "redirect_uri",
+    `${appConfig.baseUrl}/api/auth/callback`
+  );
   authUrl.searchParams.append("response_type", "code");
 
   return authUrl.toString();
 };
 
-
 export async function fetchUserData(authCode: string) {
-
-  if(!authCode) {
+  if (!authCode) {
     console.error("Missing authorization code");
     throw new Error("Missing authorization code");
   }
@@ -25,14 +26,29 @@ export async function fetchUserData(authCode: string) {
     // Create token endpoint URL
     const tokenUrl = new URL(`${appConfig.wcaUrl}/oauth/token`);
 
-    // Exchange authorization code for access token
-    const tokenResponse = await axios.post(tokenUrl.toString(), {
-      grant_type: "authorization_code",
-      client_id: appConfig.wcaClientId,
-      client_secret: appConfig.wcaClientSecret,
-      code: authCode,
-      redirect_uri: `${appConfig.baseUrl}/api/auth/callback`,
-    });
+    // Exchange authorization code for access token using Basic Auth
+    const tokenParams = new URLSearchParams();
+    tokenParams.append("grant_type", "authorization_code");
+    tokenParams.append("code", authCode);
+    tokenParams.append(
+      "redirect_uri",
+      `${appConfig.baseUrl}/api/auth/callback`
+    );
+    // Optionally include client_id in the body if required by the provider
+    tokenParams.append("client_id", appConfig.wcaClientId);
+    const basicAuthToken = Buffer.from(
+      `${appConfig.wcaClientId}:${appConfig.wcaClientSecret}`
+    ).toString("base64");
+    const tokenResponse = await axios.post(
+      tokenUrl.toString(),
+      tokenParams.toString(),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${basicAuthToken}`,
+        },
+      }
+    );
 
     const { access_token } = tokenResponse.data;
 
@@ -50,4 +66,3 @@ export async function fetchUserData(authCode: string) {
     throw new Error("Failed to fetch user data");
   }
 }
-
