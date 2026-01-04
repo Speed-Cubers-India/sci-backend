@@ -1,7 +1,12 @@
 {
   "name": "sci-backend",
   "version": "1.0.0",
-  "type": "commonjs",
+  "type": "module",
+  "description": "Backend folder for SCI",
+  "main": "esbuild.config.js",
+  "directories": {
+    "test": "tests"
+  },
   "scripts": {
     "build": "node esbuild.config.js",
     "dev": "tsx src/server.ts",
