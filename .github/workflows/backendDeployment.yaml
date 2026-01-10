@@ -46,7 +46,8 @@ jobs:
             --function-name sci-backend \
             --handler dist/lambda.handler \
             --timeout 60 \
-            --memory-size 512
+            --memory-size 512 \
+            --runtime nodejs20.x
 
       - name: Run tests
         run: yarn test
