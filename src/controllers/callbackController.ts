@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import axios from "axios";
 import appConfig from "../config/appConfig";
+import { signSession } from "../utils/jwt";
+import { setSessionCookie } from "../utils/sessionCookie";
 
 const constructTokenParams = (authCode: string) => {
   const tokenParams = new URLSearchParams();
@@ -45,6 +47,21 @@ const callback = async (req: Request, res: Response): Promise<void> => {
     const userResponse = await axios.get(userUrl.toString(), {
       headers: { Authorization: `Bearer ${access_token}` },
     });
+
+    const wcaUser = userResponse.data.me;
+    if (!wcaUser || typeof wcaUser.id !== "number") {
+      res.redirect(`${appConfig.frontendUrl}/login?error=invalid_user_data`);
+      return;
+    }
+
+    const sessionToken = signSession({
+      id: wcaUser.id,
+      wcaId: wcaUser.wca_id ?? null,
+      name: wcaUser.name,
+      avatarUrl: wcaUser.avatar?.thumb_url ?? wcaUser.avatar?.url ?? null,
+    });
+
+    setSessionCookie(res, sessionToken);
 
     if (process.env.NODE_ENV !== "production") {
       console.log(userResponse.data);

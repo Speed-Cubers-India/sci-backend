@@ -14,14 +14,18 @@
   "dependencies": {
     "aws-serverless-express": "^3.4.0",
     "axios": "^1.8.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3"
   },
   "devDependencies": {
     "@types/aws-serverless-express": "^3.3.10",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.13.10",
     "esbuild": "^0.25.1",
     "ts-node": "^10.9.2",
